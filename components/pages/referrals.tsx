@@ -56,7 +56,7 @@ export default function ReferralsPage() {
         refereeId: formData.refereeId,
         refereeEmail: formData.refereeEmail,
         programId: formData.programId,
-        status: "pending",
+        status: "pending" as const,
         metadata: {
           commissionRate: formData.commissionRate,
         },
@@ -165,9 +165,8 @@ export default function ReferralsPage() {
             </code>
             <button
               onClick={handleCopy}
-              className={`p-2 sm:p-2.5 rounded-lg transition-all duration-200 flex-shrink-0 ${
-                copied ? "bg-green-500/20 text-green-400" : "bg-primary text-primary-foreground hover:bg-primary/90"
-              }`}
+              className={`p-2 sm:p-2.5 rounded-lg transition-all duration-200 flex-shrink-0 ${copied ? "bg-green-500/20 text-green-400" : "bg-primary text-primary-foreground hover:bg-primary/90"
+                }`}
             >
               <Copy className="w-4 h-4" />
             </button>
@@ -220,9 +219,8 @@ export default function ReferralsPage() {
                 <p className="text-xs text-muted-foreground">${(entry.totalCents / 100).toFixed(2)}</p>
               </div>
               <span
-                className={`text-xs px-2.5 py-1 rounded-full font-semibold whitespace-nowrap ${
-                  entry.paid ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"
-                }`}
+                className={`text-xs px-2.5 py-1 rounded-full font-semibold whitespace-nowrap ${entry.paid ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"
+                  }`}
               >
                 {entry.paid ? "Paid" : "Pending"}
               </span>

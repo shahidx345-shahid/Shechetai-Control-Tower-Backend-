@@ -238,11 +238,11 @@ export async function POST(req: NextRequest) {
           type: paymentMethod.type,
           card: paymentMethod.card
             ? {
-                brand: paymentMethod.card.brand,
-                last4: paymentMethod.card.last4,
-                expMonth: paymentMethod.card.exp_month,
-                expYear: paymentMethod.card.exp_year,
-              }
+              brand: paymentMethod.card.brand,
+              last4: paymentMethod.card.last4,
+              expMonth: paymentMethod.card.exp_month,
+              expYear: paymentMethod.card.exp_year,
+            }
             : null,
           createdAt: new Date().toISOString(),
         })
@@ -264,9 +264,4 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Disable body parsing, need raw body for webhook signature verification
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+

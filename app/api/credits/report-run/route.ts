@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     try {
       const body = await req.json()
       const db = getFirestore()
-      
+
       // Validate required fields
       if (!body.agentId || !body.teamId || !body.creditCost) {
         return errorResponse("Missing required fields: agentId, teamId, creditCost", 400)
@@ -53,16 +53,16 @@ export async function POST(request: NextRequest) {
       if (currentBalance < body.creditCost) {
         // Check if auto-refill is enabled
         const autoRefill = wallet?.autoRefill
-        
+
         if (autoRefill?.enabled && autoRefill?.paymentMethodId) {
           // Trigger auto-refill
           const refillAmount = autoRefill.amount || 500
-          
+
           // TODO: Process payment with Stripe
           // For now, simulate successful refill
-          
+
           const newBalance = currentBalance + refillAmount - body.creditCost
-          
+
           await walletRef.update({
             balance: newBalance,
             updatedAt: new Date().toISOString(),
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
 
       // Debit credits from wallet
       const newBalance = currentBalance - body.creditCost
-      
+
       await walletRef.update({
         balance: newBalance,
         updatedAt: new Date().toISOString(),
@@ -158,5 +158,5 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       return handleApiError(error)
     }
-  }, "internal") // Only internal service accounts can call this
+  }, "super_admin") // Only internal service accounts can call this
 }

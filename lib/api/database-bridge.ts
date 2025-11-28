@@ -34,13 +34,13 @@ const DatabaseBridge = {
   getAgents: async (filters?: any) => {
     const all = await AgentDatabase.getAll()
     if (!filters) return all
-    
+
     let result = all
     if (filters.teamId) result = result.filter(a => a.teamId === filters.teamId)
     if (filters.status) result = result.filter(a => a.status === filters.status)
     if (filters.search) {
       const search = filters.search.toLowerCase()
-      result = result.filter(a => 
+      result = result.filter(a =>
         a.agentId.toLowerCase().includes(search) ||
         a.name.toLowerCase().includes(search)
       )
@@ -52,18 +52,19 @@ const DatabaseBridge = {
   createAgent: (data: any) => AgentDatabase.create(data),
   updateAgent: (agentId: string, data: any) => AgentDatabase.update(agentId, data),
   deleteAgent: (agentId: string) => AgentDatabase.delete(agentId),
+  getAgentAnalytics: (agentId: string) => AgentDatabase.getAnalytics(agentId),
 
   // Teams
   getTeams: async (filters?: any) => {
     const all = await TeamDatabase.getAll()
     if (!filters) return all
-    
+
     let result = all
     if (filters.ownerId) result = result.filter(t => t.ownerId === filters.ownerId)
     if (filters.status) result = result.filter(t => t.status === filters.status)
     if (filters.search) {
       const search = filters.search.toLowerCase()
-      result = result.filter(t => 
+      result = result.filter(t =>
         t.teamId.toLowerCase().includes(search) ||
         t.name.toLowerCase().includes(search)
       )
@@ -75,18 +76,19 @@ const DatabaseBridge = {
   createTeam: (data: any) => TeamDatabase.create(data),
   updateTeam: (teamId: string, data: any) => TeamDatabase.update(teamId, data),
   deleteTeam: (teamId: string) => TeamDatabase.delete(teamId),
+  getTeamAnalytics: (teamId: string) => TeamDatabase.getAnalytics(teamId),
 
   // Users
   getUsers: async (filters?: any) => {
     const all = await UserDatabase.getAll()
     if (!filters) return all
-    
+
     let result = all
     if (filters.role) result = result.filter(u => u.role === filters.role)
     if (filters.status) result = result.filter(u => u.status === filters.status)
     if (filters.search) {
       const search = filters.search.toLowerCase()
-      result = result.filter(u => 
+      result = result.filter(u =>
         u.userId.toLowerCase().includes(search) ||
         u.email.toLowerCase().includes(search) ||
         u.name.toLowerCase().includes(search)
@@ -117,7 +119,7 @@ const DatabaseBridge = {
   getTransactions: async (filters?: any) => {
     const all = await TransactionDatabase.getAll()
     if (!filters) return all
-    
+
     let result = all
     if (filters.teamId) result = result.filter(t => t.teamId === filters.teamId)
     if (filters.walletId) result = result.filter(t => t.walletId === filters.walletId)
@@ -159,7 +161,7 @@ const DatabaseBridge = {
   getAuditLogs: async (filters?: any) => {
     const { items } = await AuditLogDatabase.getAll(100, 0)
     if (!filters) return items
-    
+
     let result = items
     if (filters.userId) result = result.filter(l => l.userId === filters.userId)
     if (filters.resource) result = result.filter(l => l.resource === filters.resource)
@@ -192,7 +194,7 @@ const DatabaseBridge = {
   getReferrals: async (filters?: any) => {
     const all = await ReferralDatabase.getAll()
     if (!filters) return all
-    
+
     let result = all
     if (filters.referrerId) result = result.filter(r => r.referrerId === filters.referrerId)
     if (filters.status) result = result.filter(r => r.status === filters.status)

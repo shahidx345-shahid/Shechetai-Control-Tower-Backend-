@@ -4,8 +4,8 @@
  */
 
 import { getFirebaseDb } from "../firebase/admin"
-import { 
-  Agent, Team, BillingContract, Wallet, CreditTransaction, Referral, 
+import {
+  Agent, Team, BillingContract, Wallet, CreditTransaction, Referral,
   WhiteLabelConfig, TeamMember, TeamInvite, Invoice, User, AgentAnalytics,
   TeamAnalytics, SubscriptionPlan, Subscription, PaymentMethod, AuditLog,
   SystemSettings, FeatureFlag, UsageReport
@@ -33,7 +33,7 @@ export class FirestoreDatabase {
     filters: Array<{ field: string; op: FirebaseFirestore.WhereFilterOp; value: any }>
   ): Promise<T[]> {
     let query: FirebaseFirestore.Query = this.db.collection(collection)
-    
+
     filters.forEach(filter => {
       query = query.where(filter.field, filter.op, filter.value)
     })
@@ -98,7 +98,7 @@ export class FirestoreDatabase {
   static async update<T>(collection: string, id: string, data: Partial<T>): Promise<T | null> {
     const docRef = this.db.collection(collection).doc(id)
     const doc = await docRef.get()
-    
+
     if (!doc.exists) return null
 
     // Remove undefined values to avoid Firestore errors
@@ -141,7 +141,7 @@ export class FirestoreDatabase {
     filters?: Array<{ field: string; op: FirebaseFirestore.WhereFilterOp; value: any }>
   ): Promise<{ items: T[]; total: number }> {
     let query: FirebaseFirestore.Query = this.db.collection(collection)
-    
+
     if (filters) {
       filters.forEach(filter => {
         query = query.where(filter.field, filter.op, filter.value)
@@ -191,6 +191,18 @@ export class AgentDatabase {
   static async delete(agentId: string): Promise<boolean> {
     return FirestoreDatabase.delete(this.collection, agentId)
   }
+
+  static async getAnalytics(agentId: string): Promise<AgentAnalytics> {
+    // TODO: Implement real analytics tracking
+    return {
+      agentId,
+      totalRequests: 0,
+      successfulRequests: 0,
+      failedRequests: 0,
+      averageResponseTime: 0,
+      usageByDay: []
+    }
+  }
 }
 
 /**
@@ -223,6 +235,20 @@ export class TeamDatabase {
 
   static async delete(teamId: string): Promise<boolean> {
     return FirestoreDatabase.delete(this.collection, teamId)
+  }
+
+  static async getAnalytics(teamId: string): Promise<TeamAnalytics> {
+    // TODO: Implement real analytics tracking
+    return {
+      teamId,
+      totalAgents: 0,
+      activeAgents: 0,
+      totalMembers: 0,
+      seatUtilization: 0,
+      totalRequests: 0,
+      monthlySpend: 0,
+      activityLog: []
+    }
   }
 }
 
@@ -344,9 +370,9 @@ export class WalletDatabase {
     }
 
     await this.db.collection(this.collection).doc(teamId).set(walletData)
-    
+
     const doc = await this.db.collection(this.collection).doc(teamId).get()
-    return { id: doc.id, walletId: doc.id, ...doc.data() } as Wallet
+    return { id: doc.id, walletId: doc.id, ...doc.data() } as unknown as Wallet
   }
 
   /**
@@ -359,9 +385,9 @@ export class WalletDatabase {
     }
 
     await this.db.collection(this.collection).doc(teamId).update(updateData)
-    
+
     const doc = await this.db.collection(this.collection).doc(teamId).get()
-    return doc.exists ? { id: doc.id, walletId: doc.id, ...doc.data() } as Wallet : null
+    return doc.exists ? { id: doc.id, walletId: doc.id, ...doc.data() } as unknown as Wallet : null
   }
 
   /**
@@ -370,7 +396,7 @@ export class WalletDatabase {
   static async updateBalance(teamId: string, amount: number): Promise<Wallet | null> {
     const walletRef = this.db.collection(this.collection).doc(teamId)
     const doc = await walletRef.get()
-    
+
     if (!doc.exists) {
       return null
     }
@@ -384,7 +410,7 @@ export class WalletDatabase {
     })
 
     const updated = await walletRef.get()
-    return { id: updated.id, walletId: updated.id, ...updated.data() } as Wallet
+    return { id: updated.id, walletId: updated.id, ...updated.data() } as unknown as Wallet
   }
 }
 
@@ -609,9 +635,9 @@ export class TeamMemberDatabase {
       .where("teamId", "==", teamId)
       .where("userId", "==", userId)
       .get()
-    
+
     if (snapshot.empty) return false
-    
+
     await snapshot.docs[0].ref.delete()
     return true
   }

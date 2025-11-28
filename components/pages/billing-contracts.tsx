@@ -37,7 +37,7 @@ export default function BillingContractsPage() {
         apiClient.getInvoices(),
         apiClient.getTeams()
       ])
-      
+
       if (contractsRes.ok) {
         const data = await contractsRes.json()
         // Handle nested paginated response: data.data.data or data.data.items
@@ -75,7 +75,7 @@ export default function BillingContractsPage() {
         billingCycle: formData.billingCycle as any,
         amount: formData.amount,
         currency: "USD",
-        status: "active",
+
         startDate: new Date().toISOString(),
       })
 
@@ -96,7 +96,7 @@ export default function BillingContractsPage() {
     try {
       const contract = contracts[0]
       const contractId = contract.contractId || contract.id
-      
+
       const response = await apiClient.updateContract(contractId, {
         metadata: {
           ...contract.metadata,
@@ -117,14 +117,14 @@ export default function BillingContractsPage() {
     try {
       const contract = contracts[0]
       const currentBlocks = contract.metadata?.blocks || 0
-      
+
       if (currentBlocks <= 0) {
         setError("No blocks to remove")
         return
       }
 
       const contractId = contract.contractId || contract.id
-      
+
       const response = await apiClient.updateContract(contractId, {
         metadata: {
           ...contract.metadata,
@@ -372,14 +372,14 @@ export default function BillingContractsPage() {
         >
           <h3 className="font-semibold text-sm sm:text-base text-card-foreground mb-4">Quick Actions</h3>
           <div className="space-y-3">
-            <button 
+            <button
               onClick={handleAddBlock}
               className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm font-medium hover:bg-primary/90 hover:shadow-lg transition-all duration-200"
             >
               <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
               Add Block
             </button>
-            <button 
+            <button
               onClick={handleRemoveBlock}
               className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-muted text-foreground rounded-lg text-xs sm:text-sm font-medium hover:bg-muted/80 transition-all duration-200"
             >
@@ -406,11 +406,10 @@ export default function BillingContractsPage() {
               style={{
                 animation: `fadeInUp 0.4s ease-out ${0.3 + index * 0.1}s both`,
               }}
-              className={`p-3 sm:p-4 rounded-lg border-2 transition-all duration-300 cursor-pointer ${
-                tier.id === mockContract.planId
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
-              }`}
+              className={`p-3 sm:p-4 rounded-lg border-2 transition-all duration-300 cursor-pointer ${tier.id === mockContract.planId
+                ? "border-primary bg-primary/5"
+                : "border-border hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
+                }`}
             >
               <p className="font-semibold text-sm sm:text-base text-card-foreground">{tier.name}</p>
               <p className="text-xl sm:text-2xl font-bold text-primary mt-2">{tier.price}</p>
