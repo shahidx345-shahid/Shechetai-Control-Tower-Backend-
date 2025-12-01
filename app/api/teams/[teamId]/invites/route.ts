@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server"
 import { withAuth } from "@/lib/api/middleware"
 import { successResponse, errorResponse, handleApiError } from "@/lib/api/helpers"
-import { Database } from "@/lib/api/database-bridge"
 import { initializeFirebaseAdmin } from "@/lib/firebase/admin"
+import { Database } from "@/lib/api/database-bridge"
 import nodemailer from "nodemailer"
 
 initializeFirebaseAdmin()
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
           },
         })
 
-        const inviteUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000'}/invite/${(invite as any).id || invite.inviteId}`
+        const inviteUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://hooks.shechet.com'}/invite/${(invite as any).id || invite.inviteId}`
 
         await transporter.sendMail({
           from: process.env.EMAIL_FROM || process.env.SMTP_USER,
