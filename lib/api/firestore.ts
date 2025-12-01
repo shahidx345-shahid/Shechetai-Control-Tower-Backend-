@@ -273,6 +273,12 @@ export class UserDatabase {
     return users.length > 0 ? users[0] : null
   }
 
+  static async getByTeam(teamId: string): Promise<User[]> {
+    return FirestoreDatabase.query<User>(this.collection, [
+      { field: "teamId", op: "==", value: teamId }
+    ])
+  }
+
   static async create(userId: string, data: Omit<User, 'userId'>): Promise<User> {
     return FirestoreDatabase.createWithId<User>(this.collection, userId, data as any)
   }
@@ -304,6 +310,10 @@ export class ContractDatabase {
     return FirestoreDatabase.query<BillingContract>(this.collection, [
       { field: "teamId", op: "==", value: teamId }
     ])
+  }
+
+  static async getByTeamId(teamId: string): Promise<BillingContract[]> {
+    return this.getByTeam(teamId)
   }
 
   static async create(data: Omit<BillingContract, 'contractId'>): Promise<BillingContract> {
@@ -418,7 +428,7 @@ export class WalletDatabase {
  * Credit Transaction operations
  */
 export class TransactionDatabase {
-  private static collection = "transactions"
+  private static collection = "creditTransactions"
 
   static async getAll(): Promise<CreditTransaction[]> {
     return FirestoreDatabase.getAll<CreditTransaction>(this.collection)
@@ -459,6 +469,12 @@ export class SubscriptionDatabase {
     ])
   }
 
+  static async getByTeamId(teamId: string): Promise<Subscription[]> {
+    return FirestoreDatabase.query<Subscription>(this.collection, [
+      { field: "teamId", op: "==", value: teamId }
+    ])
+  }
+
   static async create(data: Omit<Subscription, 'subscriptionId'>): Promise<Subscription> {
     return FirestoreDatabase.create<Subscription>(this.collection, data as any)
   }
@@ -472,7 +488,7 @@ export class SubscriptionDatabase {
  * Payment Method operations
  */
 export class PaymentMethodDatabase {
-  private static collection = "paymentMethods"
+  private static collection = "payment-methods"
 
   static async getByUser(userId: string): Promise<PaymentMethod[]> {
     return FirestoreDatabase.query<PaymentMethod>(this.collection, [
@@ -490,6 +506,10 @@ export class PaymentMethodDatabase {
 
   static async delete(paymentMethodId: string): Promise<boolean> {
     return FirestoreDatabase.delete(this.collection, paymentMethodId)
+  }
+
+  static async setDefault(paymentMethodId: string): Promise<PaymentMethod | null> {
+    return FirestoreDatabase.update<PaymentMethod>(this.collection, paymentMethodId, { isDefault: true })
   }
 }
 
@@ -545,7 +565,7 @@ export class FeatureFlagDatabase {
  * White Label Config operations
  */
 export class WhiteLabelDatabase {
-  private static collection = "whiteLabels"
+  private static collection = "whiteLabelConfigs"
 
   static async getAll(): Promise<WhiteLabelConfig[]> {
     return FirestoreDatabase.getAll<WhiteLabelConfig>(this.collection)
@@ -553,6 +573,12 @@ export class WhiteLabelDatabase {
 
   static async getById(configId: string): Promise<WhiteLabelConfig | null> {
     return FirestoreDatabase.getById<WhiteLabelConfig>(this.collection, configId)
+  }
+
+  static async getByTeamId(teamId: string): Promise<WhiteLabelConfig[]> {
+    return FirestoreDatabase.query<WhiteLabelConfig>(this.collection, [
+      { field: "teamId", op: "==", value: teamId }
+    ])
   }
 
   static async create(data: Omit<WhiteLabelConfig, 'configId'>): Promise<WhiteLabelConfig> {
@@ -661,6 +687,11 @@ export class TeamInviteDatabase {
     ])
     // Add inviteId for backward compatibility
     return results.map(r => ({ ...r, inviteId: (r as any).id } as TeamInvite))
+  }
+
+  // Alias for backward compatibility with database-bridge
+  static async getByTeamId(teamId: string): Promise<TeamInvite[]> {
+    return this.getByTeam(teamId)
   }
 
   static async getById(inviteId: string): Promise<TeamInvite | null> {
